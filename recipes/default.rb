@@ -26,15 +26,7 @@ end
 
 # declare the execute["local-gen"] before notifying it.
 execute "locale-gen" do
-    command "locale-gen"
-    action :nothing
+  locales = node[:localegen][:lang].join(' ')
+  command "locale-gen #{locales} && update-locale #{locales}"
+  action :run
 end 
-
-file node["localegen"]["locale_file"] do
-  action :create
-  owner "root"
-  group "root"
-  mode "0644"
-  content node[:localegen][:lang].join("\n") + "\n"
-  notifies :run, "execute[locale-gen]", :immediate
-end
